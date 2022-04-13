@@ -1,0 +1,1 @@
+python3 ./do_an_thuc_tap/manage.py runserver
