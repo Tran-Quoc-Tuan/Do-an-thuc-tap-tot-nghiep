@@ -41,6 +41,10 @@ class Trạng_thái_hóa_đơn(models.TextChoices):
     HOÀN_TẤT      = 'Hoàn tất'
     ĐÃ_HỦY        = 'Đã hủy'
 
+class Loại_ảnh(models.TextChoices):
+    BANNER  = 'Banner'
+    PRODUCT = 'Product'
+
 
 class ThuongHieu(models.Model):
     ten = models.CharField(max_length=40, default=Blank.TEXT_FIELD.value, blank=True, null=True, verbose_name="Tên thương hiệu")
@@ -73,11 +77,11 @@ class SanPham(models.Model):
     chatLieu   = models.CharField(max_length=30, default=Blank.TEXT_FIELD.value, blank=True, null=True, verbose_name="Chất liệu sản phẩm")
     os         = models.CharField(max_length=20, default=Blank.TEXT_FIELD.value, blank=True, null=True, verbose_name="Hệ điều hành cài sẵn")
     cpu        = models.CharField(max_length=20, default=Blank.TEXT_FIELD.value, blank=True, null=True, verbose_name="Chip xử lý")
-    cpu_clock  = models.CharField(max_length=10, default="GHz", blank=True, null=True, verbose_name="Tốc độ xử lý")
+    cpu_clock  = models.CharField(max_length=10, default="NaN GHz", blank=True, null=True, verbose_name="Tốc độ xử lý")
     gpu        = models.CharField(max_length=20, default=Blank.TEXT_FIELD.value, blank=True, null=True, verbose_name="Chip đồ họa")
-    pin        = models.CharField(max_length=20, default="mAh", blank=True, null=True, verbose_name="Dung lượng pin")
+    pin        = models.CharField(max_length=20, default="NaN mAh", blank=True, null=True, verbose_name="Dung lượng pin")
     loaiPin    = models.CharField(max_length=20, default=Blank.TEXT_FIELD.value, blank=True, null=True, verbose_name="Loại pin")
-    nguonSac   = models.CharField(max_length=10, default="w", blank=True, null=True, verbose_name="Công suất sạc tối đa")
+    nguonSac   = models.CharField(max_length=10, default="NaN w", blank=True, null=True, verbose_name="Công suất sạc tối đa")
     nam        = models.CharField(max_length=10, default=None, blank=True, null=True, verbose_name="Năm ra mắt")
     soLuong    = models.PositiveIntegerField(default=Blank.NUM_FIELD.value, blank=True, null=True, verbose_name="Số lượng sản phẩm")
     trangThai  = models.CharField(max_length=20, default=Trạng_thái_sản_phẩm.KHÓA, choices=Trạng_thái_sản_phẩm.choices, verbose_name="Trạng thái sản phẩm")
@@ -88,7 +92,9 @@ class SanPham(models.Model):
 class Anh(models.Model):
     sanPham = models.ForeignKey(SanPham, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Thuộc sản phẩm")
     ten = models.CharField(max_length=20)
-    uri = models.FileField(upload_to="media/", verbose_name="File ảnh")
+    loaiAnh = models.CharField(max_length=7, default=Loại_ảnh.PRODUCT, choices=Loại_ảnh.choices)
+    file = models.FileField(blank=True, null=True, upload_to="media/", verbose_name="File ảnh")
+    uri = models.URLField(blank=True, null=True, verbose_name="File ảnh")
 
     def __str__(self) -> str:
         return f"{self.sanPham} - {self.ten}"
@@ -131,7 +137,7 @@ class CustomUser(models.Model):
 class ChiTietGioHang(models.Model):
     user    = models.ForeignKey(User, on_delete=models.CASCADE)
     sanPham = models.ForeignKey(SanPham, on_delete=models.PROTECT, blank=True, null=True, verbose_name="Sản phẩm")
-    gia     = models.ForeignKey(Gia, on_delete=models.PROTECT, blank=True, null=True, verbose_name="Giá sản phẩm")
+    gia     = models.PositiveIntegerField(blank=True, null=True, verbose_name="Giá sản phẩm")
 
     def __str__(self) -> str: return self.gia
 
@@ -139,7 +145,7 @@ class ChiTietGioHang(models.Model):
 class HoaDon(models.Model):
     user      = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Người dùng")
     ngayLap   = models.DateTimeField(auto_now=True, verbose_name="Ngày lập hóa đơn")
-    tongTien  = models.PositiveIntegerField(default=Blank.NUM_FIELD.value, verbose_name="Tổng tiền")
+    tongTien  = models.PositiveBigIntegerField(default=Blank.NUM_FIELD.value, verbose_name="Tổng tiền")
     trangThai = models.CharField(max_length=15, default=Trạng_thái_hóa_đơn.ĐANG_XÁC_NHẬN, choices=Trạng_thái_hóa_đơn.choices, verbose_name="Trạng thái")
 
     def __str__(self) -> str:
@@ -168,7 +174,7 @@ class BinhLuan(models.Model):
 
 
 class PhanHoi(models.Model):
-    sanPham  = models.ForeignKey(SanPham, on_delete=models.CASCADE, verbose_name="Sản phẩm")
+    binhLuan = models.ForeignKey(BinhLuan, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Bình luận")
     user     = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True, verbose_name="Người dùng")
     hoTen    = models.CharField(max_length=50, blank=True, null=True, verbose_name="Họ tên người đăng")
     soDT     = models.CharField(max_length=10, validators=[validate_number], blank=True, null=True, verbose_name="Số điện thoại")
