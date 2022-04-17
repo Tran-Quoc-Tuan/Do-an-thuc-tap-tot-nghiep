@@ -105,3 +105,6 @@ dist
 
 # Virtualenv python
 venv/*
+
+# Test
+./do_an_thuc_tap/test*
