@@ -5,10 +5,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
   <!-- <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" /> -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css" /> -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -17,14 +17,14 @@
     <section class="header-main border-bottom bg-white">
       <div class="container-fluid">
         <div class="row p-2 pt-3 pb-3 d-flex align-items-center">
-          <div class="col-md-2"><i class="bi bi-house" width:200px style="font-size: 50px"></i></div>
+          <div class="col-md-2"><img src="./icon/house.svg" class="logo" alt="logo" width="40dp" height="40dp" /></div>
           <div class="col-md-8">
             <div class="d-flex form-inputs"> <input class="form-control" type="text"
                 placeholder="Search any product..."> <i class="bx bx-search"></i> </div>
           </div>
           <div class="col-md-2">
-            <div class="d-flex d-none d-md-flex flex-row align-items-center"> <span class="shop-bag"><i
-                  class='bi bi-cart4' style="font-size: 30px"></i></span>
+            <div class="d-flex d-none d-md-flex flex-row align-items-center"> <span class="shop-bag"><img
+                  src="./icon/cart.svg" class="logo" alt="logo" width="30dp" height="30dp" /></span>
               <div class="d-flex flex-column ms-2"> <span class="qty">1 Product</span> <span
                   class="fw-bold">$27.90</span> </div>
             </div>
@@ -56,46 +56,46 @@
     </nav>
   </header>
   <main>
-    <div class="container my-2">
+    <div class="container-fluid my-2">
       <div class="row">
-        <img src="https://picsum.photos/1280/300" class="img-fluid rounded" alt="...">
+        <img src="https://picsum.photos/1280/300" class="img-fluid " alt="...">
       </div>
-      <div class="row my-4">
-        <div class="col-xl-2 ">
+      <div class="row my-4 mx-2">
+        <div class="col-xl-2 my-2 ">
           <div class="row border">
-            <label style="font-weight: bold">Hãng sản xuất</label>
-            <div class="col-6">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
-                <label class="form-check-label" for="flexCheckDefault">
-                  Tất cả
-                </label>
+              <label style="font-weight: bold" class="border-bottom pb-2 ml-2">Hãng sản xuất</label>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="All" id="flexCheckDefault" checked>
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Tất cả
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Samsung" id="flexCheckChecked">
+                  <label class="form-check-label" for="flexCheckChecked">
+                    Samsung
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Xiaomi" id="flexCheckChecked">
+                  <label class="form-check-label" for="flexCheckChecked">
+                    Xiaomi
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Tecno" id="flexCheckChecked">
+                  <label class="form-check-label" for="flexCheckChecked">
+                    Tecno
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Masstel" id="flexCheckChecked">
+                  <label class="form-check-label" for="flexCheckChecked">
+                    Masstel
+                  </label>
+                </div>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                <label class="form-check-label" for="flexCheckChecked">
-                  Samsung
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                <label class="form-check-label" for="flexCheckChecked">
-                  Xiaomi
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                <label class="form-check-label" for="flexCheckChecked">
-                  Tecno
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                <label class="form-check-label" for="flexCheckChecked">
-                  Masstel
-                </label>
-              </div>
-            </div>
             <div class="col-6">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
@@ -130,7 +130,7 @@
             </div>
           </div>
           <div class="row my-4">
-            <label style="font-weight: bold">Mức giá</label>
+            <label style="font-weight: bold" class="border pb-2 ml-2">Mức giá</label>
             <div class="col border">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
@@ -167,7 +167,7 @@
         </div>
         <div class="col-lg-10">
           <div class="row" id="dataContainer">
-            <div class="col-md-4 ">
+            <div class="col-md-4 my-2 my-2 my-2">
               <div class="card">
                 <div class="card-body">
                   <div class="card-img-actions"> <img
@@ -189,7 +189,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4 ">
+            <div class="col-md-4 my-2 my-2 ">
               <div class="card">
                 <div class="card-body">
                   <div class="card-img-actions"> <img
@@ -211,7 +211,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 my-2 ">
               <div class="card">
                 <div class="card-body">
                   <div class="card-img-actions"> <img
@@ -233,7 +233,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-4 mt-2">
+            <div class="col-md-4 my-2 ">
               <div class="card">
                 <div class="card-body">
                   <div class="card-img-actions"> <img
@@ -254,61 +254,21 @@
                       class="bi bi-cart-plus mr-2"></i> Add to cart</button>
                 </div>
               </div>
-            </div>
-            <div class="col-md-4 mt-2">
-              <div class="card">
-                <div class="card-body">
-                  <div class="card-img-actions"> <img
-                      src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                      class="card-img img-fluid" width="96" height="350" alt=""> </div>
-                </div>
-                <div class="card-body bg-light text-center">
-                  <div class="mb-2">
-                    <h6 class="font-weight-semibold mb-2"> <a href="#" class="text-default mb-2" data-abc="true">Toshiba
-                        Notebook with 500GB HDD & 8GB RAM</a> </h6> <a href="#" class="text-muted"
-                      data-abc="true">Laptops & Notebooks</a>
-                  </div>
-                  <h3 class="mb-0 font-weight-semibold">$250.99</h3>
-                  <div> <i class="bi bi-star star"></i> <i class="bi bi-star star"></i> <i class="bi bi-star star"></i>
-                    <i class="bi bi-star star"></i>
-                  </div>
-                  <div class="text-muted mb-3">34 reviews</div> <button type="button" class="btn bg-cart btn-warning"><i
-                      class="bi bi-cart-plus mr-2"></i> Add to cart</button>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 mt-2">
-              <div class="card">
-                <div class="card-body">
-                  <div class="card-img-actions"> <img
-                      src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                      class="card-img img-fluid" width="96" height="350" alt=""> </div>
-                </div>
-                <div class="card-body bg-light text-center">
-                  <div class="mb-2">
-                    <h6 class="font-weight-semibold mb-2"> <a href="#" class="text-default mb-2" data-abc="true">Toshiba
-                        Notebook with 500GB HDD & 8GB RAM</a> </h6> <a href="#" class="text-muted"
-                      data-abc="true">Laptops & Notebooks</a>
-                  </div>
-                  <h3 class="mb-0 font-weight-semibold">$250.99</h3>
-                  <div> <i class="bi bi-star star"></i> <i class="bi bi-star star"></i> <i class="bi bi-star star"></i>
-                    <i class="bi bi-star star"></i>
-                  </div>
-                  <div class="text-muted mb-3">34 reviews</div> <button type="button" class="btn bg-cart btn-warning"><i
-                      class="bi bi-cart-plus mr-2"></i> Add to cart</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row my-2">
-            <div class="text-center">
-              <button type="button" class="btn btn-dark btn-square-md">1</button>
-              <button type="button" class="btn btn-dark btn-square-md">2</button>
-              <button type="button" class="btn btn-dark btn-square-md">3</button>
             </div>
           </div>
         </div>
+        <div class="row my-2">
+          <div class="text-center">
+            <button type="button" class="btn btn-dark btn-square-md">1</button>
+            <button type="button" class="btn btn-dark btn-square-md">2</button>
+            <button type="button" class="btn btn-dark btn-square-md">3</button>
+          </div>
+        </div>
       </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
   </main>
   <footer class="container-fluid border bg-primary">
     <!-- Section: Social media -->
@@ -322,22 +282,22 @@
       <!-- Right -->
       <div>
         <a href="" class="me-4 text-reset">
-          <i class="bi bi-facebook"></i>
+          <img src="./icon/facebook.svg" class="logo" alt="logo" />
         </a>
         <a href="" class="me-4 text-reset">
-          <i class="bi bi-twitter"></i>
+          <img src="./icon/twitter.svg" class="logo" alt="logo" />
         </a>
         <a href="" class="me-4 text-reset">
-          <i class="bi bi-google"></i>
+          <img src="./icon/google.svg" class="logo" alt="logo" />
         </a>
         <a href="" class="me-4 text-reset">
-          <i class="bi bi-instagram"></i>
+          <img src="./icon/instagram.svg" class="logo" alt="logo" />
         </a>
         <a href="" class="me-4 text-reset">
-          <i class="bi bi-linkedin"></i>
+          <img src="./icon/linkedin.svg" class="logo" alt="logo" />
         </a>
         <a href="" class="me-4 text-reset">
-          <i class="bi bi-github"></i>
+          <img src="./icon/github.svg" class="logo" alt="logo" />
         </a>
       </div>
       <!-- Right -->
@@ -405,7 +365,7 @@
           <!-- Grid column -->
 
           <!-- Grid column -->
-          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+          <div class="col-md-4 my-2 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
             <!-- Links -->
             <h6 class="text-uppercase fw-bold mb-4">
               Contact
@@ -432,80 +392,13 @@
     </div>
     <!-- Copyright -->
   </footer>
-  <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+    integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+    crossorigin="anonymous"></script>
 
-  <script>
-    const result = document.querySelector('#dataContainer')
-    //func create new card
-    createNewCard = (img, name, price) => {
-      const card = document.createElement('div')
-      card.classList('card')
-
-      const cardBody = document.createElement('div')
-      cardbody.classList('card-body')
-      card.appendChild(cardBody)
-
-      const cardImg = document.createElement('div')
-      cardImg.classList('card-img-action')
-      const image = document.createElement('img')
-      image.classList('card-img img-fluid')
-      image.width = 96
-      image.height = 350
-      image.src = img
-      cardImg.appendChild(image)
-      cardBody.appendChild(cardImg)
-
-      const cardInfo = document.createElement('div')
-      cardInfo.classList('card-body bg-light text-center')
-
-      const productName = document.createElement('div')
-      productName.classList('mb-2')
-      const productFont = document.createElement('h6')
-      productFont.className('font-weight-semibold mb-2')
-      productFont.textContent = name
-      productName.appendChild(productFont)
-      cardInfo.appendChild(productName)
-
-      const productPrice = document.createElement('h3')
-      productPrice.classList('mb-0 font-weight-semibold')
-      productPrice.textContent('$' + price)
-      cardInfo.appendChild(productPrice)
-
-      const productRating = document.createElement('div')
-      const star = document.createElement('i')
-      for (let i = 0; i < 5; i++) {
-        star.classList('bi bi-star star')
-        productRating.appendChild(star)
-      }
-      cardInfo.appendChild(productRating)
-
-      const productReview = document.createElement('div')
-      productReview.classList('text-muted mb-3')
-      productReview.textContent('10 reviews')
-      cardInfo.appendChild(productReview)
-
-      const productBtn = document.createElement('button')
-      productBtn.type('submit')
-      productBtn.classList('btn bg-cart btn-warning')
-      const btnIcon = document.createElement('i')
-      btnIcon.classList('bi bi-cart-plus mr-2')
-      productBtn.appendChild(btnIcon)
-      productBtn.nodeValue('Add to cart')
-      cardInfo.appendChild(productBtn)
-      card.appendChild(cardInfo)
-
-      result.appendChild('card')
-    }
-    //funtion đổ dữ liệu
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get('/')
-      }
-      catch (error) {
-
-      }
-    }
+  <script src="js-script.js">
   </script>
+
 </body>
 
 </html>
