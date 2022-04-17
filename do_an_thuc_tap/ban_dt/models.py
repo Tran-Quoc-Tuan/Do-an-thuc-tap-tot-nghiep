@@ -139,7 +139,7 @@ class ChiTietGioHang(models.Model):
     sanPham = models.ForeignKey(SanPham, on_delete=models.PROTECT, blank=True, null=True, verbose_name="Sản phẩm")
     gia     = models.PositiveIntegerField(blank=True, null=True, verbose_name="Giá sản phẩm")
 
-    def __str__(self) -> str: return self.gia
+    def __str__(self) -> str: return str(self.gia)
 
 
 class HoaDon(models.Model):
