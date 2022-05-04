@@ -43,7 +43,8 @@ def log_in(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        if user := authenticate(request, username=username, password=password):
+        user = authenticate(request, username=username, password=password)
+        if user:
             print(login(request, user))
             return HttpResponse("Login success!")
         else: return HttpResponse("Login false!")
