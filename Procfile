@@ -1,0 +1,1 @@
+web: gunicorn do_an_thuc_tap.wsgi
