@@ -44,7 +44,8 @@ class SanPham:
 
     @staticmethod
     def chiTiet(_id : str):
-        if result := SanPham.collection.find_one({'_id': ObjectId(_id)}):
+        result = SanPham.collection.find_one({'_id': ObjectId(_id)})
+        if result:
             result['_id'] = str(result['_id'])
             return result
         return False
@@ -96,7 +97,8 @@ class GioHang:
         """Thêm sản phẩm vào giỏ hàng"""
         if not SanPham.is_exist(sanPhamId) and not user_isExist(userId): return False
 
-        if gioHang:= GioHang.search(userId):
+        gioHang = GioHang.search(userId)
+        if gioHang:
             chiTiet : list = gioHang['chi tiet']
             if len(chiTiet) == 0:
                 GioHang.collection.insert_one({
@@ -138,7 +140,8 @@ class GioHang:
         if not SanPham.is_exist(sanPhamId) or not user_isExist(userId): return False
 
         if GioHang.search(userId):
-            if gioHang := GioHang.collection.find_one({'userId': userId, 'chi tiet.sanPhamId': sanPhamId}):
+            gioHang = GioHang.collection.find_one({'userId': userId, 'chi tiet.sanPhamId': sanPhamId})
+            if gioHang:
                 chiTiet : list = gioHang['chi tiet']
                 for sanPham in chiTiet:
                     if sanPham['sanPhamId'] == sanPhamId:
