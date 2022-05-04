@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ</title>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+</head>
+<style>
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    display: grid;
+}
+</style>
+<body>
+    <!-- <b>Hello {% if user.authenticate %} {{ user.username }} {% else %} anonymous {% endif %}</b>
+    <p>User id: {{ user.id }}</p>
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <p><label for="username">User name:</label> <input type="text" name="username" id=""></p>
+        <p><label for="password">Password</label> <input type="password" name="password" id=""></p>
+        <button type="submit">Login</button>
+    </form> -->
+</body>
+<script>
+$(document).ready(() => {
+    // $.get("http://127.0.0.1:8000/ajax/", (data) => {
+    //     // document.write(data);
+    //     console.log('Success')
+    // })
+    //     .done((data) => {
+    //         for (const sanPham of data['data']){
+    //             document.write(`<br/>Img: ${sanPham['anh']}<br/>Ten: ${sanPham['ten']}<br/>Gia: ${sanPham['gia']}<br/>`);
+    //         }
+    //     })
+    //     .fail((e) => {
+    //         console.error(e)
+    //     })
+    $.get("/", (data) => {
+        // document.write(data);
+        for (const sanPham of data){
+            document.write(`<br/>Img: ${sanPham['anh']}<br/>Ten: ${sanPham['ten']}<br/>Gia: ${sanPham['gia']}<br/>`);
+        }
+    })
+})
+</script>
+</html>

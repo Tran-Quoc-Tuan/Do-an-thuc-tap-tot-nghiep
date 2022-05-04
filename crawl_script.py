@@ -1,41 +1,38 @@
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
+import dns
 from datetime import datetime
+from pprint import pprint
 from time import sleep
 from sys import argv
 import requests
-import django
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 import re
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'do_an_thuc_tap.settings'
-django.setup()
-from ban_dt.models import (
-    ThuongHieu, DongSP, SanPham, Anh,
-    Mau, CauHinh, Gia, Trạng_thái_sản_phẩm, Loại_ảnh
-)
+# import django
+# from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+# import os
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'do_an_thuc_tap.settings'
+# django.setup()
+# from ban_dt.models import (
+#     ThuongHieu, DongSP, SanPham, Anh,
+#     Mau, CauHinh, Gia, Trạng_thái_sản_phẩm, Loại_ảnh
+# )
 
+MONGO_URL = r"mongodb+srv://TuanTe:matkhau@nodejs.7qnbu.mongodb.net/Project?retryWrites=true&w=majority"
 
 header = {
-'cookie': 'DMX_Personal=%7B%22CustomerId%22%3A0%2C%22CustomerSex%22%3A0%2C%22CustomerName%22%3Anull%2C%22CustomerPhone%22%3Anull%2C%22Address%22%3Anull%2C%22CurrentUrl%22%3Anull%2C%22ProvinceId%22%3A3%2C%22ProvinceName%22%3A%22H%E1%BB%93%20Ch%C3%AD%20Minh%22%2C%22DistrictId%22%3A0%2C%22DistrictType%22%3Anull%2C%22DistrictName%22%3Anull%2C%22WardId%22%3A0%2C%22WardType%22%3Anull%2C%22WardName%22%3Anull%2C%22StoreId%22%3A0%7D; ShowLocationSuggest=hide; .AspNetCore.Antiforgery.Z2GafvQY0KE=CfDJ8Hg-6B019lZOuTrZRx5b2MBBMopk2_-ZjiuziIscEo_5I0oGDmFTVuUm_g2D8jq_ual7w3ucWjpqb27v9CE9ztV0e3Ky0n8iLTaXnDYWRg_Q7NVj1PQB6R_cXmQqsCYbB3-S0lJ3EGkmwL-douBfOFw; _hjSessionUser_34921=eyJpZCI6ImJmNmIwYWUwLThjZGQtNWFkNC05YzAzLWRhMWQ3ZTkxMzM4ZSIsImNyZWF0ZWQiOjE2NDAwMTA1MDQyMzQsImV4aXN0aW5nIjp0cnVlfQ==; SEARCH_KW_HISTORY=Uc3a39_1pGDEJ1drrbFUXV0WH9KDBxM4PX_j2M8sFTRVmaV2AVrE3iJSGhMThglraoI8zxZJGsWYIBZ4La9CfQ--; .AspNetCore.Antiforgery.vxaTqZ_mpZk=CfDJ8K0bp-0BzBdClfI0XLgcMMWaDTbdNd-hCP949gAuzrWfR2HbdkgbfFrVgui3wqnIA6yaLuESXdJFunNuEVdWxKOZ66vx7evAcsuKdxWMRHiXws-iWwxfojAbtiqi9eSREVxPYRZk8dv_De5YhiLSMEk; __RequestVerificationToken_L2dhbWUtYXBw0=_rsZ0Im1MFvGzgGxFKYGNUzmcbqip1KWAQbDSay04-5pUnvFkmjHCmHLX89oGTKuzJocDwRNjgh6Si7PQ06vYHUh0wc1; chat.info=; chat.username=20220202sfVTCrxmtBudJ5SXAXwC; chat.chating=; chat.notifychatmsg=; _fbp=fb.1.1649167249821.1014583130; cebs=1; lhc_per=vid|8c4974ac04711a7e7771; .AspNetCore.Antiforgery.P8DrK6OLbe0=CfDJ8DycmlDQfH9Hl97OkpDs1mDJD6zT3PjPegHVpIDcnwTB64LM8H7plPK02t3MPsDUTMIWqR2X0zyVyPODX_tSxAlzQf_Mp5TNDuENp6eJERWvn1oidEPvTBPdFdrKUC0ugOa0SLt-fYemduz6eDJvLyc; MWG_CART_SS=CfDJ8DycmlDQfH9Hl97OkpDs1mBk0Cb1czgG%2Bbmv8X7Z1pYAgZuvAhO8Z%2FvljEgmKn%2FLKWOAfAOq%2F9tzlp00K59OJqtZzFP6iUZ3wor9RliFHjkOK8j8qR6Cx7D2PyeKIKsMZfuah2gBLH4I39euCTERmUQy%2BYuZP33%2FPD8tenvJbLLO; MWG_CART_CK=NsVKnnoXWsJeIlv7fI_QAyYIPtG3KRLbSrBfLIuNOBaV1prQfAsqeAeDFqUJRaEmaTTqSv9BjOnw6VAzdXuQwNlv%2Ffj9tWAW6XO%2FkgaqJawY3nBhW5hGn7gX32kwF_5WgIotU%2Fqs6Lzw6VAzdXuQwACQ7UwkjM%2FxtZDWUtUh1oFSnbeqk%2F%2FEurVfkkdd5kJqluc9CIuItjJGpwXr8FYSEYElaqyG4Ci6FjnB7svWJ75JWJ37l8CdQdEQF72%2FZPH9XKAF%2FIlguKbdDRX4NhxJgRHWyLhr3JpmI0Q_VcuSRWI-; _ce.s=v~a2dc548f3eab6668766b72161931ad0bbd14435d~vpv~0; mwgishv2=1; _gid=GA1.2.808979441.1649982699; mwgisper=1; _gat_UA-918185-25=1; _ga_TLRZMSX5ME=GS1.1.1649982697.10.1.1649983648.54; _ga=GA1.2.1653792072.1634141213; SvID=beline2682|YljAx|Yli8n',
-'referer': 'https://www.thegioididong.com/dtdd/samsung-galaxy-s22-ultra?src=osp',
-'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="100", "Microsoft Edge";v="100"',
-'sec-ch-ua-mobile': '?0',
-'sec-ch-ua-platform': '"Windows"',
-'sec-fetch-dest': 'empty',
-'sec-fetch-mode': 'cors',
-'sec-fetch-site': 'same-origin',
-'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.39',
-'x-requested-with': 'XMLHttpRequest',
+    'cookie': 'DMX_Personal=%7B%22CustomerId%22%3A0%2C%22CustomerSex%22%3A0%2C%22CustomerName%22%3Anull%2C%22CustomerPhone%22%3Anull%2C%22Address%22%3Anull%2C%22CurrentUrl%22%3Anull%2C%22ProvinceId%22%3A3%2C%22ProvinceName%22%3A%22H%E1%BB%93%20Ch%C3%AD%20Minh%22%2C%22DistrictId%22%3A0%2C%22DistrictType%22%3Anull%2C%22DistrictName%22%3Anull%2C%22WardId%22%3A0%2C%22WardType%22%3Anull%2C%22WardName%22%3Anull%2C%22StoreId%22%3A0%7D; ShowLocationSuggest=hide; _fbp=fb.1.1638164071726.337451399; lhc_per=vid|875355a312a0213070f1; .AspNetCore.Antiforgery.Z2GafvQY0KE=CfDJ8Hg-6B019lZOuTrZRx5b2MBBMopk2_-ZjiuziIscEo_5I0oGDmFTVuUm_g2D8jq_ual7w3ucWjpqb27v9CE9ztV0e3Ky0n8iLTaXnDYWRg_Q7NVj1PQB6R_cXmQqsCYbB3-S0lJ3EGkmwL-douBfOFw; _hjSessionUser_34921=eyJpZCI6ImJmNmIwYWUwLThjZGQtNWFkNC05YzAzLWRhMWQ3ZTkxMzM4ZSIsImNyZWF0ZWQiOjE2NDAwMTA1MDQyMzQsImV4aXN0aW5nIjp0cnVlfQ==; SEARCH_KW_HISTORY=Uc3a39_1pGDEJ1drrbFUXV0WH9KDBxM4PX_j2M8sFTRVmaV2AVrE3iJSGhMThglraoI8zxZJGsWYIBZ4La9CfQ--; .AspNetCore.Antiforgery.vxaTqZ_mpZk=CfDJ8K0bp-0BzBdClfI0XLgcMMWaDTbdNd-hCP949gAuzrWfR2HbdkgbfFrVgui3wqnIA6yaLuESXdJFunNuEVdWxKOZ66vx7evAcsuKdxWMRHiXws-iWwxfojAbtiqi9eSREVxPYRZk8dv_De5YhiLSMEk; __RequestVerificationToken_L2dhbWUtYXBw0=_rsZ0Im1MFvGzgGxFKYGNUzmcbqip1KWAQbDSay04-5pUnvFkmjHCmHLX89oGTKuzJocDwRNjgh6Si7PQ06vYHUh0wc1; chat.info=; chat.username=20220202sfVTCrxmtBudJ5SXAXwC; chat.notifychatmsg=; cebs=1; _ce.s=v~a2dc548f3eab6668766b72161931ad0bbd14435d~vpv~0; mwgishv2=1; _gid=GA1.2.635370422.1651129292; _ga=GA1.2.1170090707.1638164071; _ga_TLRZMSX5ME=GS1.1.1651129291.17.1.1651130881.47; mwgisper=0; SvID=beline2686|YmpEJ|Ymo7z',
+    'referer': 'https://www.thegioididong.com/dtdd/samsung-galaxy-s22-ultra?src=osp',
+    'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="100", "Microsoft Edge";v="100"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'none',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
+    'x-requested-with': 'XMLHttpRequest',
 }
 
-
-def log(log_string : str, file : bool = True):
-    content = f'[{datetime.strftime(datetime.now(), "%H:%M:%S %d/%m/%Y")}] {log_string}'
-    print(content)
-    if file:
-        with open('crawl_log.txt', 'a+') as f: f.write(content)
-
-
+'''
 class ThuongHieuRaw:
     def __init__(self, ten : str) -> None:
         self.ten = ten
@@ -299,54 +296,142 @@ class SanPhamRaw:
             ).getObject()
             for color in Maus: GiaRaw(sanPham, cauHinh, color, price)
         return sanPham
+'''
+def parserHTML(url : str):
+    sleep(5)
+    pageSanPham = BeautifulSoup(requests.get(url=url, headers=header).text, 'html.parser')
+    idSP = pageSanPham.find('section', class_="detail").get('data-id')
+    ul_sp = pageSanPham.find('ul', class_=idSP).find_all('div', class_="liright")
+    camSau = ul_sp[2].find('span').text
+    camTruoc = ul_sp[3].find('span').text
+    price = pageSanPham.find('p', class_='box-price-present').text[:-1].replace('.', '').replace('₫', '')
+    try: listCauHinh = pageSanPham.find('div', class_='box03 group desk').find_all('a', class_='box03__item item')
+    except:
+        storage = pageSanPham.find_all('div', class_='liright')
+        cauHinhs = [{
+            'ram': int(storage[5].text.split(' ')[0]),
+            'rom': int(storage[6].text.split(' ')[0]),
+            'price': price
+        }]
+    else:
+        storage = pageSanPham.find_all('div', class_='liright')
+        cauHinhs = [
+            {
+                'ram': int(storage[5].text.split(' ')[0]),
+                'rom': int(storage[6].text.split(' ')[0]),
+                'price': price
+            }
+        ]
+        for cau_hinh in listCauHinh:
+            sleep(3)
+            url = 'https://www.thegioididong.com' + str(cau_hinh.get('href'))
+            soup = BeautifulSoup(requests.get(url, headers=header).text, 'html.parser')
+            price = soup.find('p', class_='box-price-present').text[:-1].replace('.', '').replace('₫', '')
+            storage = soup.find_all('div', class_='liright')
+            cauHinhs.append({
+                'ram': int(storage[5].text.split(' ')[0]),
+                'rom': int(storage[6].text.split(' ')[0]),
+                'price': price
+            })
+    colorImgs = pageSanPham.find_all('div', class_='item itemTab')
+    colors = pageSanPham.find('div', class_='box03 color group desk').find_all('a', class_='box03__item item')
+    maus = [
+        {
+            'ten': color.text,
+            'ma': color.get('data-color')
+        } for color in colors
+    ]
+    a = list()
+    for colorImg in colorImgs:
+        if (data_color := colorImg.get('data-color-id')) != '0':
+            a.append(
+                {
+                    'ma': data_color,
+                    'url': colorImg.find('img').get('data-src')
+                }
+            )
+
+    for mau in maus:
+        for colorImg in a:
+            if mau['ma'] == colorImg['ma']: mau |= colorImg
+    moTa = pageSanPham.find('div', class_="content-article")
+    sleep(2)
+    data = requests.get(f'https://www.thegioididong.com/Product/GetGalleryItemInPopup?productId={idSP}&isAppliance=false&galleryType=5&colorId=0', headers=header).text
+    soup = BeautifulSoup(data, 'html.parser')
+    img_alt = soup.find('div', class_="img").find('img').get('alt')
+    parameter_items = soup.find_all('div', class_="parameter-item")
+    manHinh = parameter_items[0].find_all('div', class_='ctRight')
+    OS_CPU = parameter_items[3].find_all('div', class_='ctRight')
+    connects = parameter_items[5].find_all('div', class_='ctRight')
+    power = parameter_items[6].find_all('div', class_='ctRight')
+    utiliti = parameter_items[7].find_all('div', class_='ctRight')
+    genaral = parameter_items[8].find_all('div', class_='ctRight')
+    img_src = 'https:' + str(soup.find('div', class_="img").find('img').get('src'))
+    _sanPham = {
+        'ThuongHieu': str(img_alt.split(' ')[0]),
+        'ten': ' '.join(str(img_alt).split(' ')[:-1]) if re.search('GB$', str(img_alt)) else str(img_alt),
+        'moTa': str(moTa),
+        'doPG': manHinh[1].text.strip('\n'),
+        'doSang': manHinh[3].text.strip('\n'),
+        'matCU': manHinh[4].text.strip('\n'),
+        'manHinh': manHinh[2].text.strip('\n'),
+        'camTruoc': camTruoc,
+        'camSau': camSau,
+        'sim': connects[0].text.strip('\n'),
+        'IP': utiliti[2].text.strip('\n'),
+        'kt_tl': genaral[2].text.strip('\n'),
+        'chatLieu': genaral[1].text.strip('\n'),
+        'os': OS_CPU[0].text.strip('\n'),
+        'cpu': OS_CPU[1].text.strip('\n'),
+        'cpu_clock': OS_CPU[2].text.strip('\n'),
+        'gpu': OS_CPU[3].text.strip('\n'),
+        'pin': power[0].text.strip('\n').split(' ')[0],
+        'loaiPin': power[1].text.strip('\n'),
+        'nguonSac': power[2].text.strip('\n'),
+        'nam': genaral[3].text.strip('\n'),
+        'anh': [
+            {
+                'loai': 'san pham',
+                'uri': img_src
+            }
+        ],
+        'mau': maus,
+        'cau hinh': cauHinhs
+    }
+    # pprint(_sanPham, sort_dicts=False)
+    return _sanPham
+
+
+def crawl_log(log_string : str, type_log : str = 'NORMAL',file : bool = True):
+    content = f'[{datetime.strftime(datetime.now(), "%H:%M:%S %d/%m/%Y")}] {log_string}\n'
+    if type_log == 'ERROR': print(f'\033[1;31m{content}\033[0m')
+    else: print(content)
+    if file:
+        with open('crawl_log.txt', 'a+') as f: f.write(content)
 
 
 if __name__ == '__main__':
-    try: start_point = argv[1]
-    except IndexError: start_point = 0
-    urls = [
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s22-ultra?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-11?src=osp',
-        'https://www.thegioididong.com/dtdd/oppo-reno7-z?src=osp',
-        'https://www.thegioididong.com/dtdd/realme-c35?src=osp',
-        'https://www.thegioididong.com/dtdd/xiaomi-11t?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-a03?src=osp',
-        'https://www.thegioididong.com/dtdd/xiaomi-redmi-note-11-pro-4g?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-13-pro-max?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-a52s-5g?src=osp',
-        'https://www.thegioididong.com/dtdd/vivo-y15s-2021?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-z-fold-3?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-13-pro-max-xanh-la?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-13-pro?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-12-pro-max-256gb?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-13-pro-xanh-la?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s22-plus?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s21-ultra?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-12-pro?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-13?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-13-128gb-xanh-la?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s22?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s21-plus?src=osp',
-        'https://www.thegioididong.com/dtdd/xiaomi-mi-12?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-z-flip-3?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-13-mini?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-12?src=osp',
-        'https://www.thegioididong.com/dtdd/13-mini-128gb-xanh-la?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s21?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-12-mini?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-note-20?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s20-fan-edition?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-xr-128gb?src=osp',
-        'https://www.thegioididong.com/dtdd/oppo-reno6?src=osp',
-        'https://www.thegioididong.com/dtdd/xiaomi-11t-pro-5g-8gb?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-s21-fe-6gb?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-se-2022?src=osp',
-        'https://www.thegioididong.com/dtdd/iphone-se-64gb-2020-hop-moi?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-a73?src=osp',
-        'https://www.thegioididong.com/dtdd/oppo-reno4-pro?src=osp',
-        'https://www.thegioididong.com/dtdd/samsung-galaxy-a53?src=osp',
-    ]
+    urls = ['https://www.thegioididong.com/dtdd/samsung-galaxy-a22-4g?src=osp', 'https://www.thegioididong.com/dtdd/iphone-13?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-s20-fan-edition?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-z-flip-3?src=osp', 'https://www.thegioididong.com/dtdd/realme-8?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a33?src=osp', 'https://www.thegioididong.com/dtdd/iphone-11?src=osp', 'https://www.thegioididong.com/dtdd/iphone-12-pro-max-256gb?src=osp', 'https://www.thegioididong.com/dtdd/iphone-13-mini?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-redmi-note-11s-5g?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-s22-ultra?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-redmi-10-4gb-128gb?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a12-2021?src=osp', 'https://www.thegioididong.com/dtdd/realme-c25y-64gb?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-s21?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-m53?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-redmi-note-11-4gb-64gb?src=osp', 'https://www.thegioididong.com/dtdd/oppo-a16?src=osp', 'https://www.thegioididong.com/dtdd/realme-c25s?src=osp', 'https://www.thegioididong.com/dtdd/realme-c21y-3gb?src=osp', 'https://www.thegioididong.com/dtdd/vivo-v20-2021?src=osp', 'https://www.thegioididong.com/dtdd/nokia-g21?src=osp', 'https://www.thegioididong.com/dtdd/oppo-reno7-z?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a73?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-z-fold-3?src=osp', 'https://www.thegioididong.com/dtdd/iphone-12?src=osp', 'https://www.thegioididong.com/dtdd/realme-9i-4gb-64gb?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-s21-plus?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a52?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-s22?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-mi-11-lite-4g?src=osp', 'https://www.thegioididong.com/dtdd/iphone-13-pro?src=osp', 'https://www.thegioididong.com/dtdd/realme-9-pro?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-s21-fe-6gb?src=osp', 'https://www.thegioididong.com/dtdd/iphone-xr-128gb?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-redmi-note-10-pro?src=osp', 'https://www.thegioididong.com/dtdd/vivo-y21?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-11t?src=osp', 'https://www.thegioididong.com/dtdd/oppo-reno7-pro?src=osp', 'https://www.thegioididong.com/dtdd/nokia-g11?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-redmi-note-11-pro-4g?src=osp', 'https://www.thegioididong.com/dtdd/realme-c35?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a13-4g?src=osp', 'https://www.thegioididong.com/dtdd/vivo-y53s?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-11t-pro-5g-8gb?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-s22-plus?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a03?src=osp', 'https://www.thegioididong.com/dtdd/vivo-y72-5g?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a53?src=osp', 'https://www.thegioididong.com/dtdd/oppo-reno7-4g?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-note-20?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-redmi-10c?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-m33-5g?src=osp', 'https://www.thegioididong.com/dtdd/iphone-13-pro-max?src=osp', 'https://www.thegioididong.com/dtdd/vivo-v23e?src=osp', 'https://www.thegioididong.com/dtdd/oppo-a76-4g?src=osp', 'https://www.thegioididong.com/dtdd/realme-c21-y-3gb?src=osp', 'https://www.thegioididong.com/dtdd/nokia-g10?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a32-4g?src=osp', 'https://www.thegioididong.com/dtdd/oppo-a95-4g?src=osp', 'https://www.thegioididong.com/dtdd/oppo-reno6?src=osp', 'https://www.thegioididong.com/dtdd/oppo-a55-4g?src=osp', 'https://www.thegioididong.com/dtdd/oppo-a74-5g?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a52s-5g?src=osp', 'https://www.thegioididong.com/dtdd/vivo-y15s-2021?src=osp', 'https://www.thegioididong.com/dtdd/vivo-y33s?src=osp', 'https://www.thegioididong.com/dtdd/oppo-a15s?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a03s?src=osp', 'https://www.thegioididong.com/dtdd/iphone-12-mini?src=osp', 'https://www.thegioididong.com/dtdd/oppo-reno5-5g?src=osp', 'https://www.thegioididong.com/dtdd/iphone-se-2022?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-redmi-note-10s-6gb?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-mi-12?src=osp', 'https://www.thegioididong.com/dtdd/iphone-se-64gb-2020-hop-moi?src=osp', 'https://www.thegioididong.com/dtdd/iphone-12-pro-256gb?src=osp', 'https://www.thegioididong.com/dtdd/vivo-v21-5g?src=osp', 'https://www.thegioididong.com/dtdd/oppo-reno4-pro?src=osp', 'https://www.thegioididong.com/dtdd/xiaomi-11-lite-5g-ne?src=osp', 'https://www.thegioididong.com/dtdd/samsung-galaxy-a23?src=osp']
+    print(urls)
+    try: start_point = int(argv[1])
+    except IndexError:
+        start_point = 0
+    except ValueError:
+        start_point = urls.index(argv[1])
     for url in urls[start_point:]:
-        sanPham = SanPhamRaw.parserHTML(url)
-        log(f'Start point: {urls.index[url]}')
-
+        crawl_log(f'Start point: {urls.index(url)}')
+        crawl_log(f'Url: {url}')
+        try:
+            sanPham = parserHTML(url)
+        except:
+            crawl_log(f'Error in point {urls.index(url)}', type_log='ERROR')
+            continue
+        client = MongoClient(MONGO_URL)
+        db = client['Project']
+        SanPhamCollection = db['SanPham']
+        result = SanPhamCollection.insert_one(sanPham)
+        if result: crawl_log('Insert success %s' %sanPham['ten'])
+        else:
+            print("\033[1;31mERROR\033[0m")
+            exit()
+        crawl_log(sanPham['ten'])

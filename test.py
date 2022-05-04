@@ -1,3 +1,11 @@
-import datetime
+def plus():
+    global a, b
+    return a + b
 
-print(type(datetime.datetime.strftime(datetime.datetime.now(), '%H:%M:%S %d/%m/%Y')))
+
+def plus2():
+    a = 10
+    b = 20
+    return plus()
+
+plus2()
